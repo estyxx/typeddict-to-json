@@ -1,0 +1,49 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  tests:
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10']
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            cache-path: ~/.cache/pypoetry/virtualenvs
+          - os: windows-latest
+            cache-path: ~\AppData\Local\pypoetry\Cache
+
+    name: Test ${{ matrix.os }} - Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        id: setup-python
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+
+      - run: npm install -g --no-package-lock --no-save pyright
+      - run: pip install poetry
+
+      - name: "Python dependencies cache"
+        id: cache-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ matrix.cache-path }}
+          key: ${{ runner.os }}-py-${{ steps.setup-python.outputs.python-version }}-poetry-${{ hashFiles('poetry.lock') }}
+          restore-keys: ${{ runner.os }}-py-${{ steps.setup-python.outputs.python-version }}-poetry-
+
+      - name: Install dependencies
+        run: poetry install
+        if: steps.cache-poetry-dependencies.outputs.cache-hit != 'true'
+
+      - name: pytest
+        run: poetry run pytest --cov-report xml --cov=. --showlocals -vv

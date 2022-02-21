@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "typeddict-to-json"
+version = "0.1.0"
+description = "Convert TypedDict into a JSON Schema"
+authors = ["Etty <beltrami.ester@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^4.0.1"
+black = "^22.1.0"
+isort = "^5.10.1"
+pytest-cov = "^3.0.0"
+mypy = "^0.931"
+flake8-bugbear = "^22.1.11"
+flake8-eradicate = "^1.2.0"
+flake8-print = "^4.0.0"
+pre-commit = "^2.17.0"
+flake8-isort = "^4.1.1"
+flake8-black = "^0.2.4"
+pytest = "^7.0.1"
+pytest-icdiff = "^0.5"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+
+[tool.isort]
+src_paths = ["typeddict_to_json", "tests", "scripts"]
+profile = "black"
+indent = 4
+combine_star = true
+combine_as_imports = true
+lines_after_imports = 2
+known_pytest = ["pytest"]
+known_first_party = ["typeddict_to_json"]
+sections = ["FUTURE", "STDLIB", "PYTEST", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
